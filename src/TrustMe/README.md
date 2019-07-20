@@ -8,5 +8,11 @@
 
 # TODO
 
-* Implement chain of trust
-* Key signing arbitrary hash tested?
+* Implement generic versions with embedded data
+* Implement generic certificate locator with certificate type
+* Implement RSA encrypt and decrypt methods
+* Implement sample app for decrypting and encrypting data
+* Implement sample app for using certificate locator and chain of trust
+
+* Documentation
+  * Implement certificate locator and serializers is up to the user

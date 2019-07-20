@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace TrustMe
 {
@@ -93,6 +92,11 @@ namespace TrustMe
 			return rsa;
 		}
 
+		/// <summary>
+		/// Decrypts a cipher.
+		/// </summary>
+		/// <param name="cipher">The cipher.</param>
+		/// <returns>The plain text.</returns>
 		public ReadOnlyCollection<byte> Decrypt(ReadOnlyCollection<byte> cipher)
 		{
 			throw new NotImplementedException();

@@ -32,7 +32,7 @@ namespace TrustMe.UnitTests
 			IHash signerCertificateHash = null, bool makeSignerCertificateHashNull = false,
 			byte[] signature = null, bool makeSignatureNull = false)
 		=> new RsaSignature(
-			signerCertificateHash: signerCertificateHash ?? (makeSignerCertificateHashNull ? null : Scenario.DefaultSignerCertificateHash),
+			signerCertificateHash: signerCertificateHash ?? (makeSignerCertificateHashNull ? null : Scenario.DefaultSignerCertificate.Hash),
 			signature: signature ?? (makeSignatureNull ? null : Scenario.DefaultSignatureData));
 
 		public class WithoutSignature

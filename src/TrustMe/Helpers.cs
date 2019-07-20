@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace TrustMe
 {

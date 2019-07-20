@@ -43,7 +43,7 @@ namespace TrustMe.UnitTests
 				public void GenerateAndSignCallback_Should_StoreSignature()
 				{
 					// Arrange
-					var signature = new RsaSignature(Scenario.DefaultSignerCertificateHash, new byte[] { 0x11, 0x11, 0x11, 0x11 });
+					var signature = new RsaSignature(Scenario.DefaultSignerCertificate.Hash, new byte[] { 0x11, 0x11, 0x11, 0x11 });
 
 					// Act
 					var key = RsaKey.Generate((_hash) => signature);
