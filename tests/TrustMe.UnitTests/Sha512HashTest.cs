@@ -8,211 +8,225 @@ using System.Text;
 
 namespace TrustMe.UnitTests
 {
-	public class Sha512HashTest
-	{
-		public class Constructors
-		{
-			[Test]
-			public void ConstructorHashNull_ShouldThrow_ArgumentNullException()
-			{
-				// Arrange
-				// Act & Assert
-				Assert.Throws<ArgumentNullException>(() => new Sha512Hash(null));
-			}
+    public class Sha512HashTest
+    {
+        public class Constructors
+        {
+            [Test]
+            public void ConstructorHashNull_ShouldThrow_ArgumentNullException()
+            {
+                // Arrange
+                // Act & Assert
+                Assert.Throws<ArgumentNullException>(() => new Sha512Hash(null));
+            }
 
-			[Test]
-			public void ConstructorHashInvalidLength_Should_ThrowTrustException()
-			{
-				// Arrange
-				// Act & Assert
-				Assert.Throws<TrustException>(() => new Sha512Hash(Array.AsReadOnly(new byte[] { 0x01, 0x02, 0x03 })));
-			}
+            [Test]
+            public void ConstructorHashInvalidLength_Should_ThrowTrustException()
+            {
+                // Arrange
+                // Act & Assert
+                Assert.Throws<TrustException>(() => new Sha512Hash(Array.AsReadOnly(new byte[] { 0x01, 0x02, 0x03 })));
+            }
 
-			[Test]
-			public void Constructor_Should_SetProperties()
-			{
-				// Arrange
-				var hash = Sha512Hash.Compute(new byte[64]);
+            [Test]
+            public void Constructor_Should_SetProperties()
+            {
+                // Arrange
+                var hash = Sha512Hash.Compute(new byte[64]);
 
-				// Act
-				var obj = new Sha512Hash(hash.Hash);
+                // Act
+                var obj = new Sha512Hash(hash.Hash);
 
-				// Assert
-				obj.Hash.SequenceEqual(hash.Hash).Should().BeTrue();
-				obj.Name.Should().Be(HashAlgorithmName.SHA512);
-			}
-		}
+                // Assert
+                obj.Hash.SequenceEqual(hash.Hash).Should().BeTrue();
+                obj.Name.Should().Be(HashAlgorithmName.SHA512);
+            }
+        }
 
-		public class Compute
-		{
-			[Test]
-			public void FromArrayNull_ShouldThrow_ArgumentNullException()
-			{
-				// Arrange
-				// Act & Assert
-				Assert.Throws<ArgumentNullException>(() => Sha512Hash.Compute((byte[])null));
-			}
+        public class Creation
+        {
+            [Test]
+            public void CreateInstance_Should_CreateInstance()
+            {
+                // Arrange
+                // Act
+                var obj = new Sha512Hash(hash: new byte[64]).CreateAlgorithm();
 
-			[Test]
-			public void FromEmptyArray_Should_Succeed()
-			{
-				// Arrange
-				// Act
-				// Assert
-				Sha512Hash.Compute(new byte[0]).Hash
-					.SequenceEqual(Sha512Hash.Compute(new byte[0]).Hash).Should().BeTrue();
-			}
+                // Assert
+                obj.Should().BeAssignableTo<SHA512>();
+            }
+        }
 
-			[Test]
-			public void FromArrayWithInputBlockSizeLength_Should_Succeed()
-			{
-				// Arrange
-				int inputBlockSize;
-				using (var sha512 = SHA512Managed.Create()) inputBlockSize = sha512.InputBlockSize;
+        public class Compute
+        {
+            [Test]
+            public void FromArrayNull_ShouldThrow_ArgumentNullException()
+            {
+                // Arrange
+                // Act & Assert
+                Assert.Throws<ArgumentNullException>(() => Sha512Hash.Compute((byte[])null));
+            }
 
-				// Act
-				// Assert
-				Sha512Hash.Compute(new byte[inputBlockSize]).Hash
-					.SequenceEqual(Sha512Hash.Compute(new byte[inputBlockSize]).Hash).Should().BeTrue();
-			}
+            [Test]
+            public void FromEmptyArray_Should_Succeed()
+            {
+                // Arrange
+                // Act
+                // Assert
+                Sha512Hash.Compute(new byte[0]).Hash
+                    .SequenceEqual(Sha512Hash.Compute(new byte[0]).Hash).Should().BeTrue();
+            }
 
-			[Test]
-			public void FromArray_Should_Succeed()
-			{
-				// Arrange
-				// Act
-				var obj = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
-				// Assert
-				obj.Hash.SequenceEqual(Sha512Hash.Compute(Encoding.UTF8.GetBytes("test")).Hash).Should().BeTrue();
-				obj.Name.Should().Be(HashAlgorithmName.SHA512);
-			}
+            [Test]
+            public void FromArrayWithInputBlockSizeLength_Should_Succeed()
+            {
+                // Arrange
+                int inputBlockSize;
+                using (var sha512 = SHA512Managed.Create()) inputBlockSize = sha512.InputBlockSize;
 
-			[Test]
-			public void FromStreamNull_ShouldThrow_ArgumentNullException()
-			{
-				// Arrange
-				// Act & Assert
-				Assert.Throws<ArgumentNullException>(() => Sha512Hash.Compute((Stream)null));
-			}
+                // Act
+                // Assert
+                Sha512Hash.Compute(new byte[inputBlockSize]).Hash
+                    .SequenceEqual(Sha512Hash.Compute(new byte[inputBlockSize]).Hash).Should().BeTrue();
+            }
 
-			[Test]
-			public void FromEmptyStream_Should_Succeed()
-			{
-				// Arrange
-				IHash hash1 = null;
-				IHash hash2 = null;
+            [Test]
+            public void FromArray_Should_Succeed()
+            {
+                // Arrange
+                // Act
+                var obj = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                // Assert
+                obj.Hash.SequenceEqual(Sha512Hash.Compute(Encoding.UTF8.GetBytes("test")).Hash).Should().BeTrue();
+                obj.Name.Should().Be(HashAlgorithmName.SHA512);
+            }
 
-				// Act
-				using (var stream = new MemoryStream(new byte[0]))
-				{
-					hash1 = Sha512Hash.Compute(stream);
-				}
+            [Test]
+            public void FromStreamNull_ShouldThrow_ArgumentNullException()
+            {
+                // Arrange
+                // Act & Assert
+                Assert.Throws<ArgumentNullException>(() => Sha512Hash.Compute((Stream)null));
+            }
 
-				using (var stream = new MemoryStream(new byte[0]))
-				{
-					hash2 = Sha512Hash.Compute(stream);
-				}
+            [Test]
+            public void FromEmptyStream_Should_Succeed()
+            {
+                // Arrange
+                IHash hash1 = null;
+                IHash hash2 = null;
 
-				// Assert
-				hash1.Hash.SequenceEqual(hash2.Hash).Should().BeTrue();
-			}
+                // Act
+                using (var stream = new MemoryStream(new byte[0]))
+                {
+                    hash1 = Sha512Hash.Compute(stream);
+                }
 
-			[Test]
-			public void Stream_Should_Succeed()
-			{
-				// Arrange
-				var data = Encoding.UTF8.GetBytes("test");
-				IHash hash1 = null;
-				IHash hash2 = null;
+                using (var stream = new MemoryStream(new byte[0]))
+                {
+                    hash2 = Sha512Hash.Compute(stream);
+                }
 
-				// Act
-				using (var stream = new MemoryStream(data))
-				{
-					hash1 = Sha512Hash.Compute(stream);
-				}
+                // Assert
+                hash1.Hash.SequenceEqual(hash2.Hash).Should().BeTrue();
+            }
 
-				using (var stream = new MemoryStream(data))
-				{
-					hash2 = Sha512Hash.Compute(stream);
-				}
+            [Test]
+            public void Stream_Should_Succeed()
+            {
+                // Arrange
+                var data = Encoding.UTF8.GetBytes("test");
+                IHash hash1 = null;
+                IHash hash2 = null;
 
-				// Assert
-				hash1.Hash.SequenceEqual(hash2.Hash).Should().BeTrue();
-				hash1.Name.Should().Be(HashAlgorithmName.SHA512);
-			}
+                // Act
+                using (var stream = new MemoryStream(data))
+                {
+                    hash1 = Sha512Hash.Compute(stream);
+                }
 
-			[Test]
-			public void FromArrayAndStream_Should_BeEqual()
-			{
-				// Arrange
-				var data = Encoding.UTF8.GetBytes("test");
-				using (var stream = new MemoryStream(data))
-				{
+                using (var stream = new MemoryStream(data))
+                {
+                    hash2 = Sha512Hash.Compute(stream);
+                }
 
-					// Act
-					var arrayHash = Sha512Hash.Compute(data);
-					var streamHash = Sha512Hash.Compute(stream);
+                // Assert
+                hash1.Hash.SequenceEqual(hash2.Hash).Should().BeTrue();
+                hash1.Name.Should().Be(HashAlgorithmName.SHA512);
+            }
 
-					// Assert
-					arrayHash.Hash.SequenceEqual(streamHash.Hash).Should().BeTrue();
-				}
-			}
-		}
+            [Test]
+            public void FromArrayAndStream_Should_BeEqual()
+            {
+                // Arrange
+                var data = Encoding.UTF8.GetBytes("test");
+                using (var stream = new MemoryStream(data))
+                {
 
-		public class Equality
-		{
-			[Test]
-			public void SameHashes_ShouldReturn_True()
-			{
-				// Arrange
-				var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
-				var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                    // Act
+                    var arrayHash = Sha512Hash.Compute(data);
+                    var streamHash = Sha512Hash.Compute(stream);
 
-				// Act
-				// Assert
-				hash1.Equals((IHash)hash2).Should().BeTrue();
-				hash1.Equals((object)hash2).Should().BeTrue();
-			}
+                    // Assert
+                    arrayHash.Hash.SequenceEqual(streamHash.Hash).Should().BeTrue();
+                }
+            }
+        }
 
-			[Test]
-			public void DifferentHashes_ShouldReturn_False()
-			{
-				// Arrange
-				var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
-				var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("TEST"));
+        public class Equality
+        {
+            [Test]
+            public void SameHashes_ShouldReturn_True()
+            {
+                // Arrange
+                var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
 
-				// Act
-				// Assert
-				hash1.Equals((IHash)hash2).Should().BeFalse();
-				hash1.Equals((object)hash2).Should().BeFalse();
-			}
-		}
+                // Act
+                // Assert
+                hash1.Equals((IHash)hash2).Should().BeTrue();
+                hash1.Equals((object)hash2).Should().BeTrue();
+            }
 
-		public class GetHashCodeMethod
-		{
-			[Test]
-			public void SameHashes_ShouldReturn_SameHashCodes()
-			{
-				// Arrange
-				var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
-				var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+            [Test]
+            public void DifferentHashes_ShouldReturn_False()
+            {
+                // Arrange
+                var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("TEST"));
 
-				// Act
-				// Assert
-				hash1.GetHashCode().Should().Be(hash2.GetHashCode());
-			}
+                // Act
+                // Assert
+                hash1.Equals((IHash)hash2).Should().BeFalse();
+                hash1.Equals((object)hash2).Should().BeFalse();
+            }
+        }
 
-			[Test]
-			public void DifferentHashes_ShouldReturn_DifferentHashCodes()
-			{
-				// Arrange
-				var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
-				var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("TEST"));
+        public class GetHashCodeMethod
+        {
+            [Test]
+            public void SameHashes_ShouldReturn_SameHashCodes()
+            {
+                // Arrange
+                var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
 
-				// Act
-				// Assert
-				hash1.GetHashCode().Should().NotBe(hash2.GetHashCode());
-			}
-		}
-	}
+                // Act
+                // Assert
+                hash1.GetHashCode().Should().Be(hash2.GetHashCode());
+            }
+
+            [Test]
+            public void DifferentHashes_ShouldReturn_DifferentHashCodes()
+            {
+                // Arrange
+                var hash1 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("test"));
+                var hash2 = Sha512Hash.Compute(Encoding.UTF8.GetBytes("TEST"));
+
+                // Act
+                // Assert
+                hash1.GetHashCode().Should().NotBe(hash2.GetHashCode());
+            }
+        }
+    }
 }

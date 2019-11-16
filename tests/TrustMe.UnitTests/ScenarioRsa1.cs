@@ -2,7 +2,7 @@
 
 namespace TrustMe.UnitTests
 {
-	class Scenario1
+	class ScenarioRsa1
 	{
 		public static readonly byte[] Exponent = new byte[] { 0x01, 0x02, 0x03 };
 		public static readonly byte[] Modulus = new byte[] {

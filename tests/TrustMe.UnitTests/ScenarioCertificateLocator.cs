@@ -10,7 +10,7 @@ namespace TrustMe.UnitTests
 		public Scenario3()
 		{
 			this.CertificateLocator = Mock.Of<ICertificateLocator>();
-			this.ChainWithLocator = new ChainOfTrust(this.CertificateLocator, Scenario.DefaultSignerCertificate);
+			this.ChainWithLocator = new ChainOfTrust(this.CertificateLocator, ScenarioRsa.DefaultSignerCertificate);
 		}
 	}
 }

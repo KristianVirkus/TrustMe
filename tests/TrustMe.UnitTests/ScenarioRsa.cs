@@ -1,8 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using Moq;
+using System.Security.Cryptography;
 
 namespace TrustMe.UnitTests
 {
-	class Scenario
+	class ScenarioRsa
 	{
 		public static readonly byte[] DefaultData;
 		public static readonly IHash DefaultDataHash;
@@ -16,18 +17,21 @@ namespace TrustMe.UnitTests
 		public static readonly byte[] DefaultSignatureData;
 		public static readonly RsaSignature DefaultSignature;
 		public static readonly byte[] DefaultEmbeddedData;
-		public static readonly IHash DefaultEmbeddedDataHash;
+		public static readonly IHashable DefaultEmbeddedDataHashable;
 		public static readonly ChainOfTrust DefaultChain;
 
 		public RSAParameters RsaParameters { get; set; }
 		public RsaKey Key { get; set; }
 
-		static Scenario()
+		static ScenarioRsa()
 		{
 			DefaultData = new byte[] { 0x00, 0x01, 0x02, 0x03 };
 			DefaultDataHash = Sha512Hash.Compute(DefaultData);
 			DefaultEmbeddedData = new byte[] { 0xff, 0xee, 0xdd, 0xcc };
-			DefaultEmbeddedDataHash = Sha512Hash.Compute(DefaultEmbeddedData);
+			DefaultEmbeddedDataHashable = Mock.Of<IHashable>();
+			Mock.Get(DefaultEmbeddedDataHashable)
+				.Setup(m=>m.ComputeHash())
+				.Returns(Sha512Hash.Compute(DefaultEmbeddedData));
 			DefaultKey = RsaKey.Generate();
 			DefaultRsa = DefaultKey.CreateRsa();
 			DefaultRsaParameters = DefaultRsa.ExportParameters(true);

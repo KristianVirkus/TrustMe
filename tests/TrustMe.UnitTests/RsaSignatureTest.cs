@@ -13,17 +13,17 @@ namespace TrustMe.UnitTests
 			IHash signerCertificateHash = null, bool makeSignerCertificateHashNull = false,
 			byte[] signature = null, bool makeSignatureNull = false)
 		{
-			dataHash = dataHash ?? Scenario.DefaultDataHash;
+			dataHash = dataHash ?? ScenarioRsa.DefaultDataHash;
 			if ((signature == null) && (!makeSignatureNull))
 			{
-				using (var rsa = Scenario.DefaultKey.CreateRsa())
+				using (var rsa = ScenarioRsa.DefaultKey.CreateRsa())
 				{
 					signature = rsa.SignHash(dataHash.Hash.ToArray(), dataHash.Name, RSASignaturePadding.Pkcs1);
 				}
 			}
 
 			return new RsaSignature(
-				signerCertificateHash: signerCertificateHash ?? (makeSignerCertificateHashNull ? null : Scenario.DefaultKey.Hash),
+				signerCertificateHash: signerCertificateHash ?? (makeSignerCertificateHashNull ? null : ScenarioRsa.DefaultKey.Hash),
 				signature: signature);
 		}
 
@@ -55,7 +55,7 @@ namespace TrustMe.UnitTests
 				var signature = create();
 
 				// Assert
-				signature.SignerCertificateHash.Hash.SequenceEqual(Scenario.DefaultKey.Hash.Hash).Should().BeTrue();
+				signature.SignerCertificateHash.Hash.SequenceEqual(ScenarioRsa.DefaultKey.Hash.Hash).Should().BeTrue();
 				signature.Signature.Should().NotBeNull();
 			}
 		}
