@@ -30,4 +30,4 @@ None, yet. Please feel free to raise an issue, create a pull request or contact 
 
 ## License
 
-This library is licensed under the MIT license. See (LICENSE)[LICENSE]. This effectively means that you may use or modify it for any purpose as long as you mention the original author.
+This library is licensed under the MIT license. See [LICENSE](LICENSE). This effectively means that you may use or modify it for any purpose as long as you mention the original author.
