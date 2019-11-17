@@ -222,10 +222,10 @@ namespace TrustMe
         ///		<paramref name="plainText"/> is null.</exception>
         ///	<exception cref="ArgumentOutOfRangeException">Thrown if
         ///	    <paramref name="plainText"/> is longer than allowed.</exception>
-        public IReadOnlyCollection<byte> Encrypt(IReadOnlyCollection<byte> plainText)
+        public byte[] Encrypt(IEnumerable<byte> plainText)
         {
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
-            if (plainText.Count > this.GetMaximumPlainTextLengthForEncryption())
+            if (plainText.Count() > this.GetMaximumPlainTextLengthForEncryption())
             {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(plainText),

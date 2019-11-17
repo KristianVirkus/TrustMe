@@ -33,7 +33,7 @@ namespace TrustMe
         ///     <paramref name="cipher"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown if
         ///     <paramref name="cipher"/> cannot be decrypted.</exception>
-        IReadOnlyCollection<byte> Decrypt(IReadOnlyCollection<byte> cipher);
+        byte[] Decrypt(IEnumerable<byte> cipher);
 
         /// <summary>
         /// Signs a hash value.

@@ -41,7 +41,7 @@ namespace TrustMe
         ///		<paramref name="plainText"/> is null.</exception>
         ///	<exception cref="ArgumentOutOfRangeException">Thrown if
         ///	    <paramref name="plainText"/> is longer than allowed.</exception>
-        IReadOnlyCollection<byte> Encrypt(IReadOnlyCollection<byte> plainText);
+        byte[] Encrypt(IEnumerable<byte> plainText);
 
         /// <summary>
         /// Verifies the a <paramref name="hash"/> against this certificate.

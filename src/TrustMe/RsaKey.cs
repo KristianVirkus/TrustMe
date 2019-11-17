@@ -140,10 +140,10 @@ namespace TrustMe
         ///     <paramref name="cipher"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown if
         ///     <paramref name="cipher"/> cannot be decrypted.</exception>
-        public IReadOnlyCollection<byte> Decrypt(IReadOnlyCollection<byte> cipher)
+        public byte[] Decrypt(IEnumerable<byte> cipher)
         {
             if (cipher == null) throw new ArgumentNullException(nameof(cipher));
-            if (cipher.Count != RsaKey.KeySize / 8)
+            if (cipher.Count() != RsaKey.KeySize / 8)
             {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(cipher),
