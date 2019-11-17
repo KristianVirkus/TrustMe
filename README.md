@@ -31,3 +31,5 @@ None, yet. Please feel free to raise an issue, create a pull request or contact 
 ## License
 
 This library is licensed under the MIT license. See [LICENSE](LICENSE). This effectively means that you may use or modify it for any purpose as long as you mention the original author.
+
+This library uses code from the .NET Foundation and its contributors for generating C# object hash codes. Please see [link](src/TrustMe/HashCode/Computer.cs) for details.
