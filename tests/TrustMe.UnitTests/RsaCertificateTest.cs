@@ -584,16 +584,4 @@ namespace TrustMe.UnitTests
             }
         }
     }
-
-    internal class HashableByteArray : IHashable
-    {
-        private readonly byte[] data;
-
-        public HashableByteArray(byte[] data)
-        {
-            this.data = data;
-        }
-
-        public IHash ComputeHash() => Sha512Hash.Compute(this.data);
-    }
 }
