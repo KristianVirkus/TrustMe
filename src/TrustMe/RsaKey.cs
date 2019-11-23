@@ -38,7 +38,7 @@ namespace TrustMe
             this.parameters = parameters;
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: null);
             this.rsa = this.CreateRsa();
         }
@@ -54,7 +54,7 @@ namespace TrustMe
             this.EmbeddedData = embeddedData?.ToArray();
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: embeddedData);
             this.rsa = this.CreateRsa();
         }
@@ -71,7 +71,7 @@ namespace TrustMe
             this.signature = signature ?? throw new ArgumentNullException(nameof(signature));
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: null);
             this.rsa = this.CreateRsa();
         }
@@ -91,7 +91,7 @@ namespace TrustMe
             this.signature = signature ?? throw new ArgumentNullException(nameof(signature));
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: embeddedData);
             this.rsa = this.CreateRsa();
         }
@@ -221,7 +221,11 @@ namespace TrustMe
                 Exponent = this.parameters.Exponent.ToArray(),
                 Modulus = this.parameters.Modulus.ToArray(),
             };
-            return new RsaCertificate(rsaParameters, this.EmbeddedData);
+
+            if (this.signature == null)
+                return new RsaCertificate(rsaParameters, this.EmbeddedData);
+            else
+                return new RsaCertificate(rsaParameters, this.EmbeddedData, this.signature);
         }
 
         #endregion
@@ -268,7 +272,7 @@ namespace TrustMe
             var signature = signKeyCallback?.Invoke(
                     Helpers.ComputeRsaHash(
                         rsaParameters: rsaParameters,
-                        includePrivateParameters: true,
+                        includePrivateParameters: false,
                         embeddedData: null));
             key = new RsaKey(
                 parameters: rsaParameters,
@@ -293,7 +297,7 @@ namespace TrustMe
             var signature = signKeyCallback?.Invoke(
                     Helpers.ComputeRsaHash(
                         rsaParameters: rsaParameters,
-                        includePrivateParameters: true,
+                        includePrivateParameters: false,
                         embeddedData: embeddedData));
             key = new RsaKey(
                 parameters: rsaParameters,

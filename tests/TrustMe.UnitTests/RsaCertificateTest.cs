@@ -522,5 +522,21 @@ namespace TrustMe.UnitTests
                 parameters.Modulus.SequenceEqual(ScenarioRsa1.Modulus).Should().BeTrue();
             }
         }
+
+        public class Derivation
+        {
+            [Test]
+            public void DeriveCertificateFromKey_Should_HaveSameHash()
+            {
+                // Arrange
+                var key = RsaKey.Generate();
+
+                // Act
+                var certificate = key.DeriveCertificate();
+
+                // Assert
+                certificate.Hash.Equals(key.Hash);
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
     <AssemblyOriginatorKeyFile>KristianVirkus.pfx</AssemblyOriginatorKeyFile>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <Authors>Kristian Virkus</Authors>
     <Copyright>Kristian Virkus</Copyright>
     <PackageLicenseExpression></PackageLicenseExpression>
@@ -17,6 +17,8 @@
     <PackageTags>asymmetric cryptography public key infrastructure pki private key chain of trust security rsa encrypt decrypt sha512 hash sign signature</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/KristianVirkus/TrustMe/develop/res/icon.png</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

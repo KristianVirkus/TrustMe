@@ -13,6 +13,9 @@ The implemented functions are:
 * Verify signature against original hash [usage](USAGE.md#sign-and-verify)
 * Asymmetrically encrypt and decrypt data [usage](USAGE.md#encrypt-and-decrypt)
 * Verify chains of signed certificates [usage](USAGE.md#chain-of-trust)
+* Serializing and deserializing keys and certificates to/from streams [usage](USAGE.md#serialization-and-deserialization)
+
+**If you update to version 1.1 there's a breaking change: The keys and certificates no longer have generic versions of their interfaces and classes. This is because the hashable embedded data objects (which the generic type was for) have been replaced by arbitrary byte streams to allow for easy (de-)serialization.**
 
 ## Installation
 

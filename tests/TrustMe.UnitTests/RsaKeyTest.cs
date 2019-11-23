@@ -57,7 +57,7 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     key.Signature.Should().BeSameAs(signature);
-                    ((RsaKey)key).Signature.Should().BeSameAs(((IKey)key).Signature);
+                    key.Signature.Should().BeSameAs(((IKey)key).Signature);
                 }
 
                 [Test]
@@ -103,6 +103,7 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     signature.Should().BeOfType<RsaSignature>();
+                    signature.SignerCertificateHash.Equals(key.Hash).Should().BeTrue();
                     key.DeriveCertificate().Verify(hash, signature);
                 }
 
@@ -117,6 +118,7 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     signedCertificate.Should().BeOfType<RsaCertificate>();
+                    signedCertificate.Signature.SignerCertificateHash.Equals(key.Hash).Should().BeTrue();
                     key.DeriveCertificate().Verify(signedCertificate.Hash, signedCertificate.Signature);
                 }
 
@@ -167,6 +169,48 @@ namespace TrustMe.UnitTests
                     certificateRsaParameters.Modulus.SequenceEqual(ScenarioRsa.DefaultRsaParameters.Modulus).Should().BeTrue();
                     // Certificates may not export private RSA cryptographic parameters.
                     Assert.Throws(Is.InstanceOf<Exception>(), () => ScenarioRsa.DefaultKey.DeriveCertificate().CreateRsa().ExportParameters(true));
+                }
+
+                [Test]
+                public void Derive_Should_CreateCertificateWithSameRsaExponentAndModulusAndEmbeddedData()
+                {
+                    // Arrange
+                    var key = RsaKey.Generate(embeddedData: new byte[] { 0xf1, 0xf2, 0xf3, 0xf4 });
+                    var keyRsaParameters = key.CreateRsa().ExportParameters(true);
+
+                    // Act
+                    var certificate = key.DeriveCertificate();
+
+                    // Assert
+                    var certificateRsaParameters = certificate.CreateRsa().ExportParameters(false);
+                    certificateRsaParameters.Exponent.SequenceEqual(keyRsaParameters.Exponent).Should().BeTrue();
+                    certificateRsaParameters.Modulus.SequenceEqual(keyRsaParameters.Modulus).Should().BeTrue();
+                    // Certificates may not export private RSA cryptographic parameters.
+                    Assert.Throws(Is.InstanceOf<Exception>(), () => certificate.CreateRsa().ExportParameters(true));
+                    certificate.EmbeddedData.SequenceEqual(key.EmbeddedData).Should().BeTrue();
+                }
+
+                [Test]
+                public void Derive_Should_CreateCertificateWithSameRsaExponentAndModulusAndEmbeddedDataAndSignature()
+                {
+                    // Arrange
+                    var signerKey = RsaKey.Generate();
+                    var key = RsaKey.Generate(
+                        embeddedData: new byte[] { 0xf1, 0xf2, 0xf3, 0xf4 },
+                        signKeyCallback: hash => (RsaSignature)signerKey.Sign(hash: hash));
+                    var keyRsaParameters = key.CreateRsa().ExportParameters(true);
+
+                    // Act
+                    var certificate = key.DeriveCertificate();
+
+                    // Assert
+                    var certificateRsaParameters = certificate.CreateRsa().ExportParameters(false);
+                    certificateRsaParameters.Exponent.SequenceEqual(keyRsaParameters.Exponent).Should().BeTrue();
+                    certificateRsaParameters.Modulus.SequenceEqual(keyRsaParameters.Modulus).Should().BeTrue();
+                    // Certificates may not export private RSA cryptographic parameters.
+                    Assert.Throws(Is.InstanceOf<Exception>(), () => certificate.CreateRsa().ExportParameters(true));
+                    certificate.EmbeddedData.SequenceEqual(key.EmbeddedData).Should().BeTrue();
+                    certificate.Signature.SignerCertificateHash.Equals(signerKey.Hash).Should().BeTrue();
                 }
             }
 
