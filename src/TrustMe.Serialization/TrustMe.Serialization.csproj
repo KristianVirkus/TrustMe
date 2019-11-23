@@ -14,6 +14,8 @@
     <PackageIconUrl>https://raw.githubusercontent.com/KristianVirkus/TrustMe/develop/res/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/KristianVirkus/TrustMe</RepositoryUrl>
     <PackageTags>serialization deserialization xml asymmetric cryptography public key infrastructure pki private key chain of trust security rsa encrypt decrypt sha512 hash sign signature</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>KristianVirkus.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
