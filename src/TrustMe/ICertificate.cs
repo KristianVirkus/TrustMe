@@ -18,7 +18,7 @@ namespace TrustMe
         /// <summary>
         /// Gets the embedded data.
         /// </summary>
-        IHashable EmbeddedData { get; }
+        IReadOnlyCollection<byte> EmbeddedData { get; }
 
         /// <summary>
         /// Gets the signature to prove this certificate's authenticity.
@@ -59,17 +59,5 @@ namespace TrustMe
         /// </summary>
         /// <returns>The RSA crypto provider instance.</returns>
         RSACryptoServiceProvider CreateRsa();
-    }
-
-    /// <summary>
-    /// Common interface of all cryptographic certificates with embedded data.
-    /// </summary>
-    /// <typeparam name="TEmbeddedData"></typeparam>
-    public interface ICertificate<TEmbeddedData> : ICertificate where TEmbeddedData : IHashable
-    {
-        /// <summary>
-        /// Gets the embedded data.
-        /// </summary>
-        TEmbeddedData EmbeddedDataTyped { get; }
     }
 }

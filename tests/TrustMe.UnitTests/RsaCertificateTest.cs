@@ -1,13 +1,14 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace TrustMe.UnitTests
 {
-    class RsaCertificateTest
+    static class RsaCertificateTest
     {
         static RsaCertificate create(
             RSAParameters? parameters = null)
@@ -16,10 +17,10 @@ namespace TrustMe.UnitTests
 
         static RsaCertificate createWithEmbeddedData(
             RSAParameters? parameters = null,
-            IHashable embeddedData = null, bool makeEmbeddedDataNull = false)
+            IEnumerable<byte> embeddedData = null, bool makeEmbeddedDataNull = false)
         => new RsaCertificate(
             parameters: parameters ?? ScenarioRsa.DefaultRsaParameters,
-            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedDataHashable));
+            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedData));
 
         static RsaCertificate createWithSignature(
             RSAParameters? parameters = null,
@@ -30,11 +31,11 @@ namespace TrustMe.UnitTests
 
         static RsaCertificate createWithEmbeddedDataAndSignature(
             RSAParameters? parameters = null,
-            IHashable embeddedData = null, bool makeEmbeddedDataNull = false,
+            IEnumerable<byte> embeddedData = null, bool makeEmbeddedDataNull = false,
             RsaSignature signature = null, bool makeSignatureNull = false)
         => new RsaCertificate(
             parameters: parameters ?? ScenarioRsa.DefaultRsaParameters,
-            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedDataHashable),
+            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedData),
             signature: signature ?? (makeSignatureNull ? null : ScenarioRsa.DefaultSignature));
 
         static RsaCertificate createWithSignatureCallback(
@@ -46,11 +47,11 @@ namespace TrustMe.UnitTests
 
         static RsaCertificate createWithEmbeddedDataAndSignatureCallback(
             RSAParameters? parameters = null,
-            IHashable embeddedData = null, bool makeEmbeddedDataNull = false,
+            IEnumerable<byte> embeddedData = null, bool makeEmbeddedDataNull = false,
             Func<IHash, RsaSignature> signCertificateCallback = null, bool makeSignCertificateCallbackNull = false)
         => new RsaCertificate(
             parameters: parameters ?? ScenarioRsa.DefaultRsaParameters,
-            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedDataHashable),
+            embeddedData: embeddedData ?? (makeEmbeddedDataNull ? null : ScenarioRsa.DefaultEmbeddedData),
             signCertificateCallback: signCertificateCallback ?? (makeSignCertificateCallbackNull ? (Func<IHash, RsaSignature>)null : (_hash) => createRsaSignature()));
 
         static RsaSignature createRsaSignature(
@@ -167,21 +168,21 @@ namespace TrustMe.UnitTests
                 public void Constructor_Should_Succeed()
                 {
                     // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
+                    var embeddedData = new byte[] { 0x10, 0x20, 0x30, 0x40 };
 
                     // Act
                     var certificate = createWithEmbeddedData(embeddedData: embeddedData);
 
                     // Assert
-                    certificate.EmbeddedData.Should().BeSameAs(embeddedData);
+                    certificate.EmbeddedData.SequenceEqual(embeddedData).Should().BeTrue();
                 }
 
                 [Test]
                 public void DifferentEmbeddedData_Should_ComputeDifferentCertificateHashes()
                 {
                     // Arrange
-                    var embeddedData1 = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-                    var embeddedData2 = new HashableByteArray(new byte[] { 0x17, 0x27, 0x37, 0x47 });
+                    var embeddedData1 = new byte[] { 0x10, 0x20, 0x30, 0x40 };
+                    var embeddedData2 = new byte[] { 0x17, 0x27, 0x37, 0x47 };
 
                     // Act
                     var certificate1 = createWithEmbeddedData(embeddedData: embeddedData1);
@@ -189,26 +190,6 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     certificate1.Hash.Equals(certificate2.Hash).Should().BeFalse();
-                }
-
-                [Test]
-                public void WithGenericEmbeddedData_Should_HaveSameHashAsWithNonGenericEmbeddedData()
-                {
-                    // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-
-                    // Act
-                    var certificateGeneric = new RsaCertificate<HashableByteArray>(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData);
-                    var certificateNonGeneric = new RsaCertificate(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData,
-                        signCertificateCallback: hash => null);
-
-                    // Assert
-                    certificateGeneric.Hash.Equals(certificateNonGeneric.Hash).Should().BeTrue();
-                    certificateGeneric.Signature.Should().Be(certificateNonGeneric.Signature);
                 }
             }
 
@@ -455,21 +436,21 @@ namespace TrustMe.UnitTests
                 public void Constructor_Should_Succeed()
                 {
                     // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
+                    var embeddedData = new byte[] { 0x10, 0x20, 0x30, 0x40 };
 
                     // Act
                     var certificate = createWithEmbeddedDataAndSignature(embeddedData: embeddedData);
 
                     // Assert
-                    certificate.EmbeddedData.Should().BeSameAs(embeddedData);
+                    certificate.EmbeddedData.SequenceEqual(embeddedData).Should().BeTrue();
                 }
 
                 [Test]
                 public void DifferentEmbeddedData_Should_ComputeDifferentCertificateHashes()
                 {
                     // Arrange
-                    var embeddedData1 = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-                    var embeddedData2 = new HashableByteArray(new byte[] { 0x17, 0x27, 0x37, 0x47 });
+                    var embeddedData1 = new byte[] { 0x10, 0x20, 0x30, 0x40 };
+                    var embeddedData2 = new byte[] { 0x17, 0x27, 0x37, 0x47 };
 
                     // Act
                     var certificate1 = createWithEmbeddedDataAndSignature(embeddedData: embeddedData1);
@@ -477,27 +458,6 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     certificate1.Hash.Equals(certificate2.Hash).Should().BeFalse();
-                }
-
-                [Test]
-                public void WithGenericEmbeddedData_Should_HaveSameHashAsWithNonGenericEmbeddedData()
-                {
-                    // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-
-                    // Act
-                    var certificateGeneric = new RsaCertificate<HashableByteArray>(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData,
-                        signature: ScenarioRsa.DefaultCertificateSignature);
-                    var certificateNonGeneric = new RsaCertificate(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData,
-                        signature: ScenarioRsa.DefaultCertificateSignature);
-
-                    // Assert
-                    certificateGeneric.Hash.Equals(certificateNonGeneric.Hash).Should().BeTrue();
-                    certificateGeneric.Signature.Should().Be(certificateNonGeneric.Signature);
                 }
             }
 
@@ -519,21 +479,21 @@ namespace TrustMe.UnitTests
                 public void Constructor_Should_Succeed()
                 {
                     // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
+                    var embeddedData = new byte[] { 0x10, 0x20, 0x30, 0x40 };
 
                     // Act
                     var certificate = createWithEmbeddedDataAndSignatureCallback(embeddedData: embeddedData);
 
                     // Assert
-                    certificate.EmbeddedData.Should().BeSameAs(embeddedData);
+                    certificate.EmbeddedData.SequenceEqual(embeddedData).Should().BeTrue();
                 }
 
                 [Test]
                 public void DifferentEmbeddedData_Should_ComputeDifferentCertificateHashes()
                 {
                     // Arrange
-                    var embeddedData1 = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-                    var embeddedData2 = new HashableByteArray(new byte[] { 0x17, 0x27, 0x37, 0x47 });
+                    var embeddedData1 = new byte[] { 0x10, 0x20, 0x30, 0x40 };
+                    var embeddedData2 = new byte[] { 0x17, 0x27, 0x37, 0x47 };
 
                     // Act
                     var certificate1 = createWithEmbeddedDataAndSignatureCallback(embeddedData: embeddedData1);
@@ -541,27 +501,6 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     certificate1.Hash.Equals(certificate2.Hash).Should().BeFalse();
-                }
-
-                [Test]
-                public void WithGenericEmbeddedData_Should_HaveSameHashAsWithNonGenericEmbeddedData()
-                {
-                    // Arrange
-                    var embeddedData = new HashableByteArray(new byte[] { 0x10, 0x20, 0x30, 0x40 });
-
-                    // Act
-                    var certificateGeneric = new RsaCertificate<HashableByteArray>(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData,
-                        signCertificateCallback: hash => ScenarioRsa.DefaultCertificateSignature);
-                    var certificateNonGeneric = new RsaCertificate(
-                        parameters: ScenarioRsa.DefaultRsaParameters,
-                        embeddedData: embeddedData,
-                        signCertificateCallback: hash => ScenarioRsa.DefaultCertificateSignature);
-
-                    // Assert
-                    certificateGeneric.Hash.Equals(certificateNonGeneric.Hash).Should().BeTrue();
-                    certificateGeneric.Signature.Should().Be(certificateNonGeneric.Signature);
                 }
             }
         }
@@ -581,6 +520,22 @@ namespace TrustMe.UnitTests
                 var parameters = rsa.ExportParameters(false);
                 parameters.Exponent.SequenceEqual(ScenarioRsa1.Exponent).Should().BeTrue();
                 parameters.Modulus.SequenceEqual(ScenarioRsa1.Modulus).Should().BeTrue();
+            }
+        }
+
+        public class Derivation
+        {
+            [Test]
+            public void DeriveCertificateFromKey_Should_HaveSameHash()
+            {
+                // Arrange
+                var key = RsaKey.Generate();
+
+                // Act
+                var certificate = key.DeriveCertificate();
+
+                // Assert
+                certificate.Hash.Equals(key.Hash);
             }
         }
     }

@@ -163,3 +163,51 @@ class Locator : ICertificateLocator
 ```
 
 Pay attention that the client certificate is not directly signed by the root certificate and the intermediate certificate is not directly set-up as trusted certificate in the chain of trust but rather looked up and verified itself.
+
+## Serialization and Deserialization
+
+Default serialization and deserialization to and from XML is provided by the `TrustMe.Serialization` library. It can serialize any `RsaKey` keys and any `RsaCertificate` certificates. The serialized data include the hash value, any embedded data, cryptographic RSA parameters (all for keys or public ones for certificates) and the optional signer certificate's hash value and signature.
+
+A key can be serialized to e.g. a file stream like this:
+
+```csharp
+RsaKey key = ...;
+using (var stream = File.Open("TrustMe.key", FileMode.Create))
+{
+    TrustMe.Serialization.Xml.Serialize(key: key, stream: stream);
+}
+```
+
+The key can be deserialized like this:
+
+```csharp
+RsaKey key;
+using (var stream = File.Open("TrustMe.key", FileMode.Open))
+{
+    key = TrustMe.Serialization.Xml.DeserializeKey(stream: stream);
+}
+```
+
+A certificate can be serialized to e.g. a file stream like this:
+
+```csharp
+RsaCertificate certificate = ...;
+using (var stream = File.Open("TrustMe.crt", FileMode.Create))
+{
+    TrustMe.Serialization.Xml.Serialize(certificate: certificate, stream: stream);
+}
+```
+
+The certificate can be deserialized like this:
+
+```csharp
+RsaCertificate certificate;
+using (var stream = File.Open("TrustMe.crt", FileMode.Open))
+{
+    certificate = TrustMe.Serialization.Xml.DeserializeCertificate(stream: stream);
+}
+```
+
+Handling the embedded data for searching keys or certificates for specific data is up to the developer, e.g. by indexing relevant information into an independent database.
+
+If you prefer to store keys in an encrypted fashion, you may always choose to serialize/deserialize the key to/from an encrypting stream instead of a plain file stream.

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <Authors>Kristian Virkus</Authors>
+    <Company>Kristian Virkus</Company>
+    <Product>TrustMe Serialization</Product>
+    <Description>This library implements XML serialization and deserialization for the TrustMe library keys and certificates.</Description>
+    <Copyright>Kristian Virkus</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/KristianVirkus/TrustMe</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/KristianVirkus/TrustMe/develop/res/icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/KristianVirkus/TrustMe</RepositoryUrl>
+    <PackageTags>serialization deserialization xml asymmetric cryptography public key infrastructure pki private key chain of trust security rsa encrypt decrypt sha512 hash sign signature</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>KristianVirkus.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrustMe\TrustMe.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

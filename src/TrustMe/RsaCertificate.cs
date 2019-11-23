@@ -21,7 +21,7 @@ namespace TrustMe
         /// <summary>
         /// Gets the embedded data.
         /// </summary>
-        public IHashable EmbeddedData { get; }
+        public IReadOnlyCollection<byte> EmbeddedData { get; }
 
         /// <summary>
         /// Gets the RSA signature.
@@ -59,10 +59,10 @@ namespace TrustMe
         /// <param name="parameters">The cryptographic RSA parameters. Be sure not to
         ///		include any private parameters.</param>
         ///	<param name="embeddedData">The embedded data or null if none.</param>
-        public RsaCertificate(RSAParameters parameters, IHashable embeddedData)
+        public RsaCertificate(RSAParameters parameters, IEnumerable<byte> embeddedData)
         {
             this.parameters = parameters;
-            this.EmbeddedData = embeddedData;
+            this.EmbeddedData = embeddedData?.ToArray();
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
                 includePrivateParameters: false,
@@ -108,10 +108,11 @@ namespace TrustMe
         ///	<param name="embeddedData">The embedded data or null if none.</param>
         /// <param name="signature">The RSA signature.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="signature"/> is null.</exception>
-        public RsaCertificate(RSAParameters parameters, IHashable embeddedData, RsaSignature signature)
+        public RsaCertificate(RSAParameters parameters, IEnumerable<byte> embeddedData,
+            RsaSignature signature)
         {
             this.parameters = parameters;
-            this.EmbeddedData = embeddedData;
+            this.EmbeddedData = embeddedData?.ToArray();
             this.Signature = signature ?? throw new ArgumentNullException(nameof(signature));
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
@@ -168,12 +169,13 @@ namespace TrustMe
         ///		the hash value was calculated from the cryptographic RSA parameters in order
         ///		to get the signature determined from that hash value.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="signature"/> is null.</exception>
-        public RsaCertificate(RSAParameters parameters, IHashable embeddedData, Func<IHash, RsaSignature> signCertificateCallback)
+        public RsaCertificate(RSAParameters parameters, IEnumerable<byte> embeddedData,
+            Func<IHash, RsaSignature> signCertificateCallback)
         {
             if (signCertificateCallback == null) throw new ArgumentNullException(nameof(signCertificateCallback));
 
             this.parameters = parameters;
-            this.EmbeddedData = embeddedData;
+            this.EmbeddedData = embeddedData?.ToArray();
 
             // Compute preliminary hash which does not include a signature.
             this.Hash = Helpers.ComputeRsaHash(
@@ -289,52 +291,5 @@ namespace TrustMe
             => this.HashWithSignature.GetHashCode();
 
         #endregion
-    }
-
-    public class RsaCertificate<TEmbeddedData> : RsaCertificate, ICertificate<TEmbeddedData> where TEmbeddedData : IHashable
-    {
-        /// <summary>
-        /// Gets the embedded data.
-        /// </summary>
-        public TEmbeddedData EmbeddedDataTyped { get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RsaCertificate{TEmbeddedData}"/> class.
-        /// </summary>
-        /// <param name="parameters">The RSA cryptographic public parameters.</param>
-        /// <param name="embeddedData">The embedded data.</param>
-        public RsaCertificate(RSAParameters parameters, TEmbeddedData embeddedData)
-            : base(parameters, embeddedData)
-        {
-            this.EmbeddedDataTyped = embeddedData;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RsaCertificate{TEmbeddedData}"/> class.
-        /// </summary>
-        /// <param name="parameters">The RSA cryptographic public parameters.</param>
-        /// <param name="embeddedData">The embedded data.</param>
-        /// <param name="signature">The RSA signature.</param>
-        public RsaCertificate(RSAParameters parameters, TEmbeddedData embeddedData, RsaSignature signature)
-            : base(parameters, embeddedData, signature)
-        {
-            this.EmbeddedDataTyped = embeddedData;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RsaCertificate{TEmbeddedData}"/> class.
-        /// </summary>
-        /// <param name="parameters">The RSA cryptographic public parameters.</param>
-        /// <param name="embeddedData">The embedded data.</param>
-        /// <param name="signCertificateCallback">The callback method to be invoked after
-        ///		the hash value was calculated from the cryptographic RSA parameters in order
-        ///		to get the signature determined from that hash value.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signature"/> is null.</exception>
-        public RsaCertificate(RSAParameters parameters, TEmbeddedData embeddedData,
-            Func<IHash, RsaSignature> signCertificateCallback)
-            : base(parameters, embeddedData, signCertificateCallback)
-        {
-            this.EmbeddedDataTyped = embeddedData;
-        }
     }
 }

@@ -38,7 +38,7 @@ namespace TrustMe
             this.parameters = parameters;
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: null);
             this.rsa = this.CreateRsa();
         }
@@ -48,13 +48,13 @@ namespace TrustMe
         /// </summary>
         /// <param name="parameters">The cryptographic RSA parameters.</param>
         /// <param name="embeddedData">The embedded data or null if none.</param>
-        public RsaKey(RSAParameters parameters, IHashable embeddedData)
+        public RsaKey(RSAParameters parameters, IEnumerable<byte> embeddedData)
         {
             this.parameters = parameters;
-            this.EmbeddedData = embeddedData;
+            this.EmbeddedData = embeddedData?.ToArray();
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: embeddedData);
             this.rsa = this.CreateRsa();
         }
@@ -71,7 +71,7 @@ namespace TrustMe
             this.signature = signature ?? throw new ArgumentNullException(nameof(signature));
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: null);
             this.rsa = this.CreateRsa();
         }
@@ -83,14 +83,15 @@ namespace TrustMe
         /// <param name="embeddedData">The embedded data or null if none.</param>
         /// <param name="signature">The cryptographic RSA signature.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="signature"/> is null.</exception>
-        public RsaKey(RSAParameters parameters, IHashable embeddedData, RsaSignature signature)
+        public RsaKey(RSAParameters parameters, IEnumerable<byte> embeddedData,
+            RsaSignature signature)
         {
             this.parameters = parameters;
-            this.EmbeddedData = embeddedData;
+            this.EmbeddedData = embeddedData?.ToArray();
             this.signature = signature ?? throw new ArgumentNullException(nameof(signature));
             this.Hash = Helpers.ComputeRsaHash(
                 rsaParameters: parameters,
-                includePrivateParameters: true,
+                includePrivateParameters: false,
                 embeddedData: embeddedData);
             this.rsa = this.CreateRsa();
         }
@@ -107,7 +108,7 @@ namespace TrustMe
         /// <summary>
         /// Gets the embedded data.
         /// </summary>
-        public IHashable EmbeddedData { get; }
+        public IReadOnlyCollection<byte> EmbeddedData { get; }
 
         /// <summary>
         /// Gets the signature to prove this key's authenticity.
@@ -220,7 +221,11 @@ namespace TrustMe
                 Exponent = this.parameters.Exponent.ToArray(),
                 Modulus = this.parameters.Modulus.ToArray(),
             };
-            return new RsaCertificate(rsaParameters, this.EmbeddedData);
+
+            if (this.signature == null)
+                return new RsaCertificate(rsaParameters, this.EmbeddedData);
+            else
+                return new RsaCertificate(rsaParameters, this.EmbeddedData, this.signature);
         }
 
         #endregion
@@ -244,7 +249,7 @@ namespace TrustMe
         /// </summary>
         /// <param name="embeddedData">The embedded data or null if none.</param>
         /// <returns>The RSA key.</returns>
-        public static RsaKey Generate(IHashable embeddedData)
+        public static RsaKey Generate(IEnumerable<byte> embeddedData)
         {
             var rsa = new RSACryptoServiceProvider(RsaKey.KeySize);
             var rsaParameters = rsa.ExportParameters(true);
@@ -267,7 +272,7 @@ namespace TrustMe
             var signature = signKeyCallback?.Invoke(
                     Helpers.ComputeRsaHash(
                         rsaParameters: rsaParameters,
-                        includePrivateParameters: true,
+                        includePrivateParameters: false,
                         embeddedData: null));
             key = new RsaKey(
                 parameters: rsaParameters,
@@ -281,7 +286,8 @@ namespace TrustMe
         /// <param name="embeddedData">The embedded data or null if none.</param>
         /// <param name="signKeyCallback">The callback method to invoke for signing the key.</param>
         /// <returns>The RSA key.</returns>
-        public static RsaKey Generate(IHashable embeddedData, Func<IHash, RsaSignature> signKeyCallback)
+        public static RsaKey Generate(IEnumerable<byte> embeddedData,
+            Func<IHash, RsaSignature> signKeyCallback)
         {
             if (signKeyCallback == null)
                 throw new ArgumentNullException(nameof(signKeyCallback));
@@ -291,113 +297,13 @@ namespace TrustMe
             var signature = signKeyCallback?.Invoke(
                     Helpers.ComputeRsaHash(
                         rsaParameters: rsaParameters,
-                        includePrivateParameters: true,
+                        includePrivateParameters: false,
                         embeddedData: embeddedData));
             key = new RsaKey(
                 parameters: rsaParameters,
                 embeddedData: embeddedData,
                 signature: signature);
             return key;
-        }
-
-        #endregion
-    }
-
-    public class RsaKey<TEmbeddedData> : RsaKey, IKey<TEmbeddedData> where TEmbeddedData : IHashable
-    {
-        #region Properties
-
-        /// <summary>
-        /// Gets the embedded data.
-        /// </summary>
-        public TEmbeddedData EmbeddedDataTyped { get; }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RsaKey"/> class.
-        /// </summary>
-        /// <param name="parameters">The cryptographic RSA parameters.</param>
-        /// <param name="embeddedData">The embedded data or null if none.</param>
-        public RsaKey(RSAParameters parameters, TEmbeddedData embeddedData)
-            : base(parameters: parameters, embeddedData: embeddedData)
-        {
-            this.EmbeddedDataTyped = embeddedData;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RsaKey"/> class.
-        /// </summary>
-        /// <param name="parameters">The cryptographic RSA parameters.</param>
-        /// <param name="embeddedData">The embedded data or null if none.</param>
-        /// <param name="signature">The cryptographic RSA signature.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signature"/> is null.</exception>
-        public RsaKey(RSAParameters parameters, TEmbeddedData embeddedData, RsaSignature signature)
-            : this(parameters: parameters, embeddedData: embeddedData)
-        {
-            this.signature = signature ?? throw new ArgumentNullException(nameof(signature));
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Generates a new RSA key pair with embedded data.
-        /// </summary>
-        /// <param name="embeddedData">The embedded data. These will be included in the
-        ///		keys hash and thus when it gets signed.</param>
-        /// <returns>The RSA key.</returns>
-        public static RsaKey<TEmbeddedData> Generate(TEmbeddedData embeddedData)
-        {
-            var rsa = new RSACryptoServiceProvider(RsaKey.KeySize);
-            var rsaParameters = rsa.ExportParameters(true);
-            var key = new RsaKey<TEmbeddedData>(parameters: rsaParameters, embeddedData: embeddedData);
-            return key;
-        }
-
-        /// <summary>
-        /// Generates a new signed RSA key.
-        /// </summary>
-        /// <param name="embeddedData">The embedded data or null if none.</param>
-        /// <param name="signKeyCallback">The callback method to invoke for signing the key.</param>
-        /// <returns>The RSA key.</returns>
-        public static RsaKey Generate(TEmbeddedData embeddedData, Func<IHash, RsaSignature> signKeyCallback)
-        {
-            if (signKeyCallback == null)
-                throw new ArgumentNullException(nameof(signKeyCallback));
-            var rsa = new RSACryptoServiceProvider(RsaKey.KeySize);
-            var rsaParameters = rsa.ExportParameters(true);
-            var key = new RsaKey<TEmbeddedData>(parameters: rsaParameters, embeddedData: embeddedData);
-            var signature = signKeyCallback?.Invoke(
-                    Helpers.ComputeRsaHash(
-                        rsaParameters: rsaParameters,
-                        includePrivateParameters: true,
-                        embeddedData: embeddedData));
-            key = new RsaKey<TEmbeddedData>(
-                parameters: rsaParameters,
-                embeddedData: embeddedData,
-                signature: signature);
-            return key;
-        }
-
-        /// <summary>
-        /// Derives the matching unsigned certificate.
-        /// </summary>
-        /// <returns>The certificate.</returns>
-        new public ICertificate<TEmbeddedData> DeriveCertificate()
-        {
-            // Create copy of RSA cryptographic parameters before creating the certificate
-            // with these data to avoid manipulation of references of cryptographic parameters
-            // via reflection or such.
-            var rsaParameters = new RSAParameters
-            {
-                Exponent = this.parameters.Exponent.ToArray(),
-                Modulus = this.parameters.Modulus.ToArray(),
-            };
-            return new RsaCertificate<TEmbeddedData>(rsaParameters, this.EmbeddedDataTyped);
         }
 
         #endregion
