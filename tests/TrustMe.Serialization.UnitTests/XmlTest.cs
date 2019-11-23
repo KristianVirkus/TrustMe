@@ -123,7 +123,7 @@ namespace TrustMe.Serialization.UnitTests
                         key: key,
                         stream: memoryStream);
                     memoryStream.Position = 0;
-                    deserialized = (RsaKey)Xml.DeserializeKey(stream: memoryStream);
+                    deserialized = Xml.DeserializeKey(stream: memoryStream);
                 }
 
                 // Assert
@@ -151,7 +151,7 @@ namespace TrustMe.Serialization.UnitTests
                         certificate: certificate,
                         stream: memoryStream);
                     memoryStream.Position = 0;
-                    deserialized = (RsaCertificate)Xml.DeserializeCertificate(stream: memoryStream);
+                    deserialized = Xml.DeserializeCertificate(stream: memoryStream);
                 }
 
                 // Assert

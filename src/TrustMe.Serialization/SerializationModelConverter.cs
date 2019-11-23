@@ -19,7 +19,7 @@ namespace TrustMe.Serialization
         /// <exception cref="NotSupportedException">Thrown, if
         ///     this model is either incomplete, invalid or does
         ///     not include a valid RSA key.</exception>
-        public static IKey ConvertKeyModel(SerializationModel model)
+        public static RsaKey ConvertKeyModel(SerializationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
             if (!model.IsKey) throw new NotSupportedException("The model contains a certificate.");
@@ -58,7 +58,7 @@ namespace TrustMe.Serialization
         ///     this model is either incomplete, invalid or does
         ///     either not include a valid RSA certificate or
         ///     includes an RSA key instead.</exception>
-        public static ICertificate ConvertCertificateModel(SerializationModel model)
+        public static RsaCertificate ConvertCertificateModel(SerializationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
             if (model.IsKey) throw new NotSupportedException("The model contains a key.");

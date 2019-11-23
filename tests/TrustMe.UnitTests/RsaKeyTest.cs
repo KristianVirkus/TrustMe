@@ -57,7 +57,7 @@ namespace TrustMe.UnitTests
 
                     // Assert
                     key.Signature.Should().BeSameAs(signature);
-                    ((RsaKey)key).Signature.Should().BeSameAs(((IKey)key).Signature);
+                    key.Signature.Should().BeSameAs(((IKey)key).Signature);
                 }
 
                 [Test]

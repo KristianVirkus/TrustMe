@@ -62,7 +62,7 @@ namespace TrustMe.Serialization
         ///     <paramref name="stream"/> is null.</exception>
         /// <exception cref="Exception">Thrown, if any error
         ///     occurred deserializing or reading the data.</exception>
-        public static IKey DeserializeKey(Stream stream)
+        public static RsaKey DeserializeKey(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
@@ -87,7 +87,7 @@ namespace TrustMe.Serialization
         ///     <paramref name="stream"/> is null.</exception>
         /// <exception cref="Exception">Thrown, if any error
         ///     occurred deserializing or reading the data.</exception>
-        public static ICertificate DeserializeCertificate(Stream stream)
+        public static RsaCertificate DeserializeCertificate(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
