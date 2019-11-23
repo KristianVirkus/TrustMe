@@ -18,11 +18,11 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 				var hash2 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 
 				// Act
 				// Assert
@@ -36,12 +36,12 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 				var otherRsaParameters = new RSACryptoServiceProvider().ExportParameters(true);
 				var hash2 = Helpers.ComputeRsaHash(
 					rsaParameters: otherRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 
 				// Act
 				// Assert
@@ -55,14 +55,14 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: false,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 				var otherRsaParameters = new RSACryptoServiceProvider().ExportParameters(true);
 				otherRsaParameters.Exponent = ScenarioRsa.DefaultRsaParameters.Exponent;
 				otherRsaParameters.Modulus = ScenarioRsa.DefaultRsaParameters.Modulus;
 				var hash2 = Helpers.ComputeRsaHash(
 					rsaParameters: otherRsaParameters,
 					includePrivateParameters: false,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 
 				// Act
 				// Assert
@@ -76,11 +76,11 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData });
+					embeddedData: ScenarioRsa.DefaultEmbeddedData);
 				var hash2 = Helpers.ComputeRsaHash(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = new byte[] { 0x12, 0x23, 0x34, 0x45 } });
+					embeddedData: new byte[] { 0x12, 0x23, 0x34, 0x45 });
 
 				// Act
 				// Assert
@@ -97,12 +97,12 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 
 				// Act
@@ -117,13 +117,13 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 				var otherRsaParameters = new RSACryptoServiceProvider().ExportParameters(true);
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: otherRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 
 				// Act
@@ -138,7 +138,7 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: false,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 				var otherRsaParameters = new RSACryptoServiceProvider().ExportParameters(true);
 				otherRsaParameters.Exponent = ScenarioRsa.DefaultRsaParameters.Exponent;
@@ -146,7 +146,7 @@ namespace TrustMe.UnitTests
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: otherRsaParameters,
 					includePrivateParameters: false,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 
 				// Act
@@ -161,12 +161,12 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = new byte[] { 0x12, 0x23, 0x34, 0x45 } },
+					embeddedData: new byte[] { 0x12, 0x23, 0x34, 0x45 },
 					signature: ScenarioRsa.DefaultSignature);
 
 				// Act
@@ -181,12 +181,12 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: ScenarioRsa.DefaultSignature);
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: new RsaSignature(Sha512Hash.Compute(new byte[] { 0xaa, 0xbb, 0xcc, 0xdd }), new byte[] { 0x1a, 0x2b, 0x3c, 0x4d }));
 
 				// Act
@@ -201,24 +201,18 @@ namespace TrustMe.UnitTests
 				var hash1 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: null);
 				var hash2 = Helpers.ComputeRsaHashWithSignature(
 					rsaParameters: ScenarioRsa.DefaultRsaParameters,
 					includePrivateParameters: true,
-					embeddedData: new TestHashable { Data = ScenarioRsa.DefaultEmbeddedData },
+					embeddedData: ScenarioRsa.DefaultEmbeddedData,
 					signature: null);
 
 				// Act
 				// Assert
 				hash1.Hash.SequenceEqual(hash2.Hash).Should().BeTrue();
 			}
-		}
-
-		class TestHashable : IHashable
-		{
-			public byte[] Data { get; set; }
-			public IHash ComputeHash() => Sha512Hash.Compute(this.Data);
 		}
 	}
 }
