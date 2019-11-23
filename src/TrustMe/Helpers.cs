@@ -21,7 +21,7 @@ namespace TrustMe
 		///		the hash.</param>
 		/// <returns>The hash.</returns>
 		public static IHash ComputeRsaHash(RSAParameters rsaParameters, bool includePrivateParameters,
-			IHashable embeddedData)
+			IEnumerable<byte> embeddedData)
 		{
 			using (var stream = new MemoryStream())
 			{
@@ -46,7 +46,7 @@ namespace TrustMe
 				if (embeddedData != null)
 				{
 					data.Add(new byte[] { 0x01 });
-					data.Add(embeddedData.ComputeHash().Hash.ToArray());
+					data.Add(Sha512Hash.Compute(embeddedData.ToArray()).Hash.ToArray());
 				}
 				else
 				{
@@ -80,7 +80,7 @@ namespace TrustMe
 		///	<param name="signature">The cryptographic RSA signature.</param>
 		/// <returns>The hash.</returns>
 		public static IHash ComputeRsaHashWithSignature(RSAParameters rsaParameters, bool includePrivateParameters,
-			IHashable embeddedData, RsaSignature signature)
+			IEnumerable<byte> embeddedData, RsaSignature signature)
 		{
 			using (var stream = new MemoryStream())
 			{
@@ -105,7 +105,7 @@ namespace TrustMe
 				if (embeddedData != null)
 				{
 					data.Add(new byte[] { 0x01 });
-					data.Add(embeddedData.ComputeHash().Hash.ToArray());
+					data.Add(Sha512Hash.Compute(embeddedData.ToArray()).Hash.ToArray());
 				}
 				else
 				{
